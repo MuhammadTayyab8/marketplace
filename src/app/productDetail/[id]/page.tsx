@@ -65,7 +65,7 @@ const Page = ({ params }: PageProps) => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://functional-ecommerence.vercel.app";
                 const response = await fetch(`${baseUrl}/api/products/${id}`, { cache: "no-store" });
                 if (!response.ok) {
                     throw new Error('Failed to fetch product data');
