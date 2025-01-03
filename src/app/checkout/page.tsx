@@ -15,15 +15,6 @@ const page = () => {
 
  const { state: { items }, dispatch } = useCart();
 
-  const handleRemove = (id: number) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: { id } });
-  };
-
-  const handleQuantityChange = (id: number, quantity: number) => {
-    if (quantity > 0) {
-      dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-    }
-  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
