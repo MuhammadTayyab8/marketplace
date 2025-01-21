@@ -1,4 +1,4 @@
-export default {
+const ShipmentSchema= {
     name: 'shipment',
     type: 'document',
     title: 'Shipment',
@@ -41,3 +41,4 @@ export default {
     ],
   };
   
+  export default ShipmentSchema

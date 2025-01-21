@@ -1,5 +1,5 @@
 // schemas/customer.js
-export default {
+const CustomerSchema = {
     name: 'customer',
     title: 'Customer',
     type: 'document',
@@ -27,3 +27,4 @@ export default {
     ],
   }
   
+  export default CustomerSchema

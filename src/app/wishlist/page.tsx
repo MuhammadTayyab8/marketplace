@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FaAngleRight, FaHeart, FaShare, FaTrashCan } from "react-icons/fa6";
 import { useCart } from '@/components/CartContext';
 import React from "react";
+import Image from "next/image";
 
 
 const WishlistPage = () => {
@@ -55,9 +56,11 @@ const WishlistPage = () => {
               <div key={product._id} className="w-full sm:w-1/2 md:w-[50%] lg:w-1/4 p-3 group">
               {/* Product card */}
                 <div className="bg-[#F4F5F7] overflow-hidden relative">
-                  <img
+                  <Image
                     src={product.imageUrl}
                     alt={product.title}
+                    width={600}
+                    height={600}
                     className="w-full h-[260px] object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Stock Badge */}

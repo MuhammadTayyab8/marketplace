@@ -1,4 +1,4 @@
-export default {
+const ProductSchema =  {
     name: 'product',
     title: 'Product',
     type: 'document',
@@ -58,3 +58,4 @@ export default {
     ],
   };
   
+  export default ProductSchema

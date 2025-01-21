@@ -1,5 +1,5 @@
 // schemas/order.js
-export default {
+const OrderSchema= {
     name: 'order',
     title: 'Order',
     type: 'document',
@@ -93,3 +93,4 @@ export default {
     ],
   };
   
+  export default OrderSchema

@@ -256,13 +256,12 @@ export default function Navbar() {
     <div className="mt-4 flex-grow ">
       {filteredProducts.length > 0 ? (
         filteredProducts.map((product) => (
-          <Link href={`/productDetail/${product._id}`}>
+          <Link href={`/productDetail/${product._id}`} key={product._id}>
           <div
-            key={product._id}
             className="flex items-center space-x-4 border-b border-gray-200 py-2"
             onClick={() => setIsPanelOpen(false)}
           >
-            <img
+            <Image
               src={product.imageUrl}
               alt={product.title}
               className="w-16 h-16 object-cover rounded-md"
