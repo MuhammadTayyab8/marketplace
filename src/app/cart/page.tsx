@@ -5,17 +5,21 @@ import { useCart } from '@/components/CartContext';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 import Link from 'next/link';
 import Qualities from '@/components/Qualities';
+import heroIcon from '../../../public/icon-hero.png'
+import hero from '../../../public/shop-hero.png'
+
+
 
 const CartPage = () => {
   const { state: { items }, dispatch } = useCart();
 
-  const handleRemove = (id: number) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: { id } });
+  const handleRemove = (_id: number) => {
+    dispatch({ type: 'REMOVE_FROM_CART', payload: { _id } });
   };
 
-  const handleQuantityChange = (id: number, quantity: number) => {
+  const handleQuantityChange = (_id: number, quantity: number) => {
     if (quantity > 0) {
-      dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+      dispatch({ type: 'UPDATE_QUANTITY', payload: { _id, quantity } });
     }
   };
 
@@ -24,21 +28,21 @@ const CartPage = () => {
   return (
     <div>
       {/* Hero Section */}
-      <div
-        className="relative w-full h-[50vh] bg-cover bg-center"
-        style={{ backgroundImage: `url(/shop-hero.png)` }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-black">
-            <h1 className="text-4xl font-bold">Cart</h1>
-            <Link href="/">
-              <p className="mt-4 text-lg flex justify-center items-center gap-3 font-bold">
-                Home <FaAngleRight /> <span className="font-thin">Cart</span>
-              </p>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <div className="relative w-full h-[50vh] bg-cover bg-center" style={{ backgroundImage: `url(${hero.src})` }}>
+
+{/* Text Content */}
+<div className="absolute inset-0  items-center flex justify-center">
+  <div className="text-center text-black justify-center">
+     <div className='flex justify-center'> <Image src={heroIcon} alt='hero-icon'/></div>
+    <h1 className="text-4xl font-bold">Cart</h1>
+    <div className='flex '>
+      <Link href='/'>
+    <p className="mt-4 text-lg flex justify-center items-center gap-3 font-bold">Home <FaAngleRight /> <span className='font-thin'>Cart</span> </p>
+    </Link>
+    </div>
+  </div>
+</div>
+</div>
 
       {/* Cart Section */}
       <div className="px-4 sm:px-20 py-8">
@@ -46,7 +50,7 @@ const CartPage = () => {
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Your Cart is Empty</h2>
             <Link href="/shop">
-              <button className="text-white bg-black px-6 py-3 rounded-md">
+              <button className="text-white bg-[#B88E2F] px-6 py-3 rounded-md">
                 Shop Now
               </button>
             </Link>
@@ -63,13 +67,13 @@ const CartPage = () => {
               </div>
               {items.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b pb-4"
                 >
                   <div className="flex items-center gap-4">
                     <Image
-                      src={item.image}
-                      alt={item.name}
+                      src={item.imageUrl}
+                      alt={item.title}
                       className="w-20 h-20 object-cover rounded-md"
                       width={300}
                       height={300}
@@ -80,7 +84,7 @@ const CartPage = () => {
                   <div className="flex items-center">
                     <button
                       className="px-2 border border-gray-300 rounded-l-md"
-                      onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                      onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
                     >
                       -
                     </button>
@@ -89,18 +93,18 @@ const CartPage = () => {
                       value={item.quantity}
                       min="1"
                       className="w-12 text-center border-y border-gray-300"
-                      onChange={(e) => handleQuantityChange(item.id, +e.target.value)}
+                      onChange={(e) => handleQuantityChange(item._id, +e.target.value)}
                     />
                     <button
                       className="px-2 border border-gray-300 rounded-r-md"
-                      onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                      onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                     >
                       +
                     </button>
                   </div>
                   <p className="font-semibold text-gray-700">RS. {item.price * item.quantity}</p>
                   <button
-                    onClick={() => handleRemove(item.id)}
+                    onClick={() => handleRemove(item._id)}
                     className="text-[#B88E2F] hover:text-red-600"
                   >
                     <FaTrashCan />
@@ -113,13 +117,13 @@ const CartPage = () => {
             <div className="w-full md:w-5/12 bg-[#F9F1E7] p-10 px-14 h-full">
               <h1 className="text-2xl font-bold text-black mb-6 text-center">Cart Totals</h1>
               <div className="space-y-4">
-      <div className="flex justify-between">
-        <p className="text-black font-bold">Subtotal</p>
-        <p className="font-medium text-[#9F9F9F]">RS. {total}</p>
+      <div className="flex justify-between border-b border-black pb-3">
+        <p className="text-black font-normal">Subtotal</p>
+        <p className="font-normal text-[#9F9F9F]">RS. {total}</p>
       </div>
 
       <div className="flex justify-between">
-        <p className="text-black font-bold">Total</p>
+        <p className="text-black font-bold text-lg">Total</p>
         <p className="text-lg font-bold text-[#B88E2F]">RS. {total}</p>
       </div>
     </div>

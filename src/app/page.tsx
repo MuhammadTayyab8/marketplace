@@ -11,6 +11,7 @@ import { FaArrowRight, FaAngleRight } from "react-icons/fa6";
 import gallery from '../../public/gallery.png'
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import OurProduct from "@/components/OurProduct";
 
 
 export default function Home() {
@@ -65,7 +66,7 @@ export default function Home() {
 {/* products start */}
 
 <h1 className="text-2xl md:text-3xl font-bold text-center mt-5">Our Products</h1>
-      <Products/>
+      <OurProduct/>
       <div className="flex justify-center">
       <Link href='/shop'><button className="text-[#B88E2F] border-2 border-[#B88E2F] px-10 py-2 text-center my-5">Show More</button></Link>
       </div>

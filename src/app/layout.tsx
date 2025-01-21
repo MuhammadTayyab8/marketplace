@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartContext";
+import { WishlistProvider } from "@/components/WishlistContext";
 
 
 
@@ -33,11 +34,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
+        <WishlistProvider>
         <CartProvider>
         <Navbar/>
         {children}
         <Footer/>
         </CartProvider>
+        </WishlistProvider>
       </body>
     </html>
   );
