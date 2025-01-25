@@ -1,0 +1,10 @@
+Test Id ,Test Description,Test Steps,Expected Result,Actual Result,Status,Security Level,Remakrs
+T-001,Verify product sync from sanity,"1. Add a product in Sanity.
+2. Check if it appears on the frontend (product listing page).",New product appears on the website.,Product sync successful,Passed,High,Products added & display
+T-002,Test cart functionality integration,Add a product to the cart.,Cart functionality is integrated correctly.,Cart works as expected,Passed,Medium,Product add to cart & saved to local storage
+T-003,Validate search integration,1. Enter a search term.,Search results match the query.,Search functional,Passed,Medium,Product Search BY entring name
+T-004,Test category-based filters,1. Apply filters on the product listing page.,Filters work correctly with backend data.,Filters functional,Passed,High,Product Filter Apply on selecting filter options
+T-005,Check order history functionality,1. Place an order. & create order history,Order history displays accurate information.,Order history functional,Passed,Low,on checkout order placed and added on customer profile
+T-006, Verify pagination controls,1. Navigate to the product listing page with more than 20 products.,"Products are paginated, and navigation works correctly.",Pagination functional,Passed,High,Pagination on Product when its more than 20
+T-007,Verify product details page,1. Select a product from the listing page.,"Product details (name, price, description, reviews) are displayed correctly.",Product details functional,Passed,High,Product detail opens according to product id
+T-008,Verify payment gateway redirection,Select a payment method and confirm in checkout,User is redirected to the payment gateway securely.,payment gatway is not apply,fail,low,payment gateway is not apply
