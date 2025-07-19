@@ -55,6 +55,12 @@ const ProductSchema =  {
         type: 'string',
         description: 'Custom unique identifier for the product',
       },
+      { 
+        name: "reviews",
+        title: "Reviews",
+        type: "array",
+        of: [{ type: "reference", to: [{ type: "review" }] }],
+      },
     ],
   };
   

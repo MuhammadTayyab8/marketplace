@@ -8,7 +8,7 @@ import supportIcon from '../../public/quality4.png'
 
 const Qualities = () => {
   return (
-    <div>
+    <div className='mx-auto max-w-screen-2xl'>
         {/* quality start */}
 
 <div className="px-4 md:px-20 py-12 bg-[#F9F1E7]">

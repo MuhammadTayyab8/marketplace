@@ -150,7 +150,7 @@ const toggleTag = (tag: string) => {
 
 
   return (
-    <div className="">
+    <div className="mx-auto max-w-screen-2xl">
       {/* Flexbox container */}
 
 

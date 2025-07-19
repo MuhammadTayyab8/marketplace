@@ -88,7 +88,7 @@ export default function Products() {
   const { addToWishlist } = useWishlist();
 
   return (
-    <div className="px-4 md:px-20">
+    <div className="px-4 md:px-20 mx-auto max-w-screen-2xl">
       <div className="flex flex-wrap gap-0 mt-8">
         {loading
           ? Array(8).fill(null).map((_, index) => <SkeletonLoader key={index} />)

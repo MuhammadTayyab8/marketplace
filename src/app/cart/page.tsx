@@ -30,22 +30,22 @@ const CartPage = () => {
       {/* Hero Section */}
       <div className="relative w-full h-[50vh] bg-cover bg-center" style={{ backgroundImage: `url(${hero.src})` }}>
 
-{/* Text Content */}
-<div className="absolute inset-0  items-center flex justify-center">
-  <div className="text-center text-black justify-center">
-     <div className='flex justify-center'> <Image src={heroIcon} alt='hero-icon'/></div>
-    <h1 className="text-4xl font-bold">Cart</h1>
-    <div className='flex '>
-      <Link href='/'>
-    <p className="mt-4 text-lg flex justify-center items-center gap-3 font-bold">Home <FaAngleRight /> <span className='font-thin'>Cart</span> </p>
-    </Link>
-    </div>
-  </div>
-</div>
-</div>
+        {/* Text Content */}
+        <div className="absolute inset-0  items-center flex justify-center">
+          <div className="text-center text-black justify-center">
+            <div className='flex justify-center'> <Image src={heroIcon} alt='hero-icon' /></div>
+            <h1 className="text-4xl font-bold">Cart</h1>
+            <div className='flex '>
+              <Link href='/'>
+                <p className="mt-4 text-lg flex justify-center items-center gap-3 font-bold">Home <FaAngleRight /> <span className='font-thin'>Cart</span> </p>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Cart Section */}
-      <div className="px-4 sm:px-20 py-8">
+      <div className="px-4 sm:px-20 py-8 mx-auto max-w-screen-2xl">
         {items.length === 0 ? (
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Your Cart is Empty</h2>
@@ -117,16 +117,16 @@ const CartPage = () => {
             <div className="w-full md:w-5/12 bg-[#F9F1E7] p-10 px-14 h-full">
               <h1 className="text-2xl font-bold text-black mb-6 text-center">Cart Totals</h1>
               <div className="space-y-4">
-      <div className="flex justify-between border-b border-black pb-3">
-        <p className="text-black font-normal">Subtotal</p>
-        <p className="font-normal text-[#9F9F9F]">RS. {total}</p>
-      </div>
+                <div className="flex justify-between border-b border-black pb-3">
+                  <p className="text-black font-normal">Subtotal</p>
+                  <p className="font-normal text-[#9F9F9F]">RS. {total}</p>
+                </div>
 
-      <div className="flex justify-between">
-        <p className="text-black font-bold text-lg">Total</p>
-        <p className="text-lg font-bold text-[#B88E2F]">RS. {total}</p>
-      </div>
-    </div>
+                <div className="flex justify-between">
+                  <p className="text-black font-bold text-lg">Total</p>
+                  <p className="text-lg font-bold text-[#B88E2F]">RS. {total}</p>
+                </div>
+              </div>
               <Link href="/checkout">
                 <button className="w-full mt-6 border-2 border-black text-black py-3 rounded-md font-semibold">
                   Checkout
