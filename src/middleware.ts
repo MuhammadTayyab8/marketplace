@@ -63,9 +63,9 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (!userId && pathname === "/checkout") {
-    return NextResponse.redirect(new URL("/log-in", request.url));
-  }
+  // if (!userId && pathname === "/checkout") {
+  //   return NextResponse.redirect(new URL("/log-in", request.url));
+  // }
 
   if (!userId && pathname === "/profile") {
     return NextResponse.redirect(new URL("/sign-up", request.url));

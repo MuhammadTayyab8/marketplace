@@ -7,7 +7,7 @@ import Link from 'next/link'
 const Footer = () => {
   return (
     <div className='mx-auto max-w-screen-2xl'>
-      <div className='px-5 sm:px-20 pb-8 border-t border-3 border-[#D9D9D9] block  sm:flex flex-wrap justify-between'>
+      <div className='px-5 sm:px-10 pb-8 border-t border-3 border-[#D9D9D9] block  sm:flex flex-wrap justify-between'>
         <div>
           <Image src={logo} alt='logo-footer' className='py-8' />
           <p className='text-[#9F9F9F] py-14'>400 University Drive Suite <br /> 200 Coral Gables,
