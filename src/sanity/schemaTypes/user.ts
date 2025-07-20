@@ -61,7 +61,7 @@ export default {
       name: 'password',
       title: 'Password',
       type: 'string',
-      hidden: true, // Hide password field in Sanity Studio for security
+      // hidden: true, // Hide password field in Sanity Studio for security
     },
     {
       name: 'orders',

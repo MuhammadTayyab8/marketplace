@@ -57,12 +57,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
-    const user = users[0];
+    const user = users[0]; 
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    if (password !== user.password) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
     // Store userId in cookie

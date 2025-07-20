@@ -60,7 +60,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg my-32">
+    <div className="max-w-md mx-auto p-8 bg-white shadow-md border border-gray-100 rounded-lg my-32">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -71,7 +71,7 @@ const LoginForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -84,7 +84,7 @@ const LoginForm = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -94,12 +94,12 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full p-3 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`w-full p-3 bg-[#B88E2F] text-white font-bold rounded-md hover:bg-[#B88E2F]/80 focus:outline-none focus:ring-2 focus:ring-[#B88E2F] ${isSubmitting ? 'cursor-not-allowed' : ''}`}
         >
           {isSubmitting ? 'Logging In...' : 'Log In'}
         </button>
         <div className="mt-4 text-center">
-          Not Account Created? <Link href='/sign-up' className="text-blue-500 hover:underline">Signup</Link>
+          Not Account Created? <Link href='/sign-up' className="text-[#B88E2F] hover:underline">Signup</Link>
         </div>
       </form>
     </div>

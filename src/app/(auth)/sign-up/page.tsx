@@ -71,7 +71,7 @@ const SignUpForm = () => {
         email: formData.email,
         username: formData.username,
         name: formData.name,
-        password: hashedPassword, // Always hash passwords on backend
+        password: formData.password, // Always hash passwords on backend
       });
   
       setSuccessMessage('Account created successfully! Redirecting...');
@@ -88,7 +88,7 @@ const SignUpForm = () => {
   
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg my-32">
+    <div className="max-w-md mx-auto p-8 bg-white shadow-md border border-gray-100 rounded-lg my-32">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -99,7 +99,7 @@ const SignUpForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -112,7 +112,7 @@ const SignUpForm = () => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -125,7 +125,7 @@ const SignUpForm = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -138,7 +138,7 @@ const SignUpForm = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#B88E2F]"
             required
           />
         </div>
@@ -149,13 +149,13 @@ const SignUpForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full p-3 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`w-full p-3 bg-[#B88E2F] text-white font-bold rounded-md hover:bg-[#B88E2F]/80 focus:outline-none focus:ring-2 focus:ring-[#B88E2F] ${isSubmitting ? 'cursor-not-allowed' : ''}`}
         >
           {isSubmitting ? 'Signing Up...' : 'Sign Up'}
         </button>
 
         <div className="mt-4 text-center">
-          Already have an account? <Link href='/log-in' className="text-blue-500 hover:underline">Login</Link>
+          Already have an account? <Link href='/log-in' className="text-[#B88E2F] hover:underline">Login</Link>
         </div>
       </form>
     </div>
