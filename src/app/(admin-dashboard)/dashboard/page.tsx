@@ -11,6 +11,8 @@ import { VscAccount } from "react-icons/vsc";
 import { SlSocialDropbox } from "react-icons/sl";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { FiRepeat } from "react-icons/fi";
+import Cards from './Cards';
+import Graph from './Graph';
 
 
 
@@ -24,15 +26,34 @@ type CardData = {
 };
 
 
+type GraphData = {
+  date: string;
+  orders: number;
+  sales: number
+}
+
+
+
+const dummyData = [
+  { date: 'Jul 1', orders: 10, income: 2000, revenue: 500 },
+  { date: 'Jul 2', orders: 15, income: 2500, revenue: 800 },
+  { date: 'Jul 3', orders: 20, income: 3000, revenue: 1200 },
+  { date: 'Jul 4', orders: 25, income: 4000, revenue: 1800 },
+  { date: 'Jul 5', orders: 18, income: 3100, revenue: 1400 },
+];
+
+
 const page = () => {
 
 
   const router = useRouter();
 
   const [selectedFilter, setSelectedFilter] = useState("This Month");
-  const [showModel, setShowModel] = useState(false)
+  const [showModel, setShowModel] = useState<Boolean>(false)
   const [filterDate, setFilterDate] = useState<{ startDate: string; endDate: string } | null>(null);
   const [cardData, setCardData] = useState<CardData[]>([])
+  const [chartData, setChartData] = useState<GraphData[]>([]);
+
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -46,6 +67,9 @@ const page = () => {
       endDate: end.toISOString(),
     });
   }, []);
+
+
+  console.log(chartData, "chartData")
 
 
   const handleFilterChange = (option: { name: string; value: { startDate: Date; endDate: Date } }) => {
@@ -109,6 +133,34 @@ const page = () => {
       }`;
 
       const orders = await client.fetch(query)
+
+      // ======================  Graph Data ======================
+
+      const dailyGraphData: Record<string, GraphData> = {};
+
+      orders.forEach((order: { _createdAt: string, total: number }) => {
+        const date = new Date(order._createdAt).toISOString().split("T")[0];
+
+        if (!dailyGraphData[date]) {
+          dailyGraphData[date] = {
+            date,
+            orders: 0,
+            sales: 0
+          };
+        }
+
+        dailyGraphData[date].orders += 1;
+        dailyGraphData[date].sales += order.total;
+      });
+
+
+      const formattedChartData: GraphData[] = Object.values(dailyGraphData).sort((a, b) =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+
+
+      setChartData(formattedChartData);
+
 
       // 1. Total Orders
       const totalsOrder = orders.length
@@ -193,7 +245,7 @@ const page = () => {
 
 
   return (
-    <div className='pt-24 h-screen max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8'>
+    <div className='pt-24 max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8'>
 
       <div className='flex justify-between items-center'>
 
@@ -249,28 +301,25 @@ const page = () => {
 
 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-6">
-        {isLoading ?
+      <Cards
+        isLoading={isLoading}
+        cardData={cardData}
+      />
 
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={index}>
-              <div className="relative p-4 rounded-xl min-h-32 bg-gray-300 animate-pulse" />
-            </div>
-          ))
 
-          : cardData.map((item, index) => (
-            <div key={index} className={`relative p-4 rounded-xl min-h-32 ${item.bgColor}`}>
 
-              <div
-                className={`absolute top-2 right-2 ${item.bgColor} ${item.textColor} rounded-full p-2 text-xl flex items-center justify-center`}
-              >
-                {item.icon}
-              </div>
 
-              <div className="text-md text-gray-600">{item.name}</div>
-              <div className={`text-xl font-semibold text-black`}>{item.value}</div>
-            </div>
-          ))}
+
+      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 my-6'>
+
+        <div className='sm:col-span-2 lg:col-span-3'>
+          <Graph data={chartData} />
+        </div>
+
+        <div>
+          Hello World
+        </div>
+
       </div>
 
 
