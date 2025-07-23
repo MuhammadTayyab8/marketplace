@@ -33,14 +33,30 @@ type GraphData = {
 }
 
 
+interface Product {
+  price: any;
+  productTitle: string;
+  _id: string;
+  name: string;
+  image: string;
+  quantity: number;
+}
 
-const dummyData = [
-  { date: 'Jul 1', orders: 10, income: 2000, revenue: 500 },
-  { date: 'Jul 2', orders: 15, income: 2500, revenue: 800 },
-  { date: 'Jul 3', orders: 20, income: 3000, revenue: 1200 },
-  { date: 'Jul 4', orders: 25, income: 4000, revenue: 1800 },
-  { date: 'Jul 5', orders: 18, income: 3100, revenue: 1400 },
-];
+interface Order {
+  _id: string;
+  products: Product[];
+}
+
+// Define the result type
+interface TopSellingProduct {
+  id: string;
+  name: string;
+  image: string;
+  sales: number;
+  price: number;
+}
+
+
 
 
 const page = () => {
@@ -49,13 +65,15 @@ const page = () => {
   const router = useRouter();
 
   const [selectedFilter, setSelectedFilter] = useState("This Month");
-  const [showModel, setShowModel] = useState<Boolean>(false)
+  const [showModel, setShowModel] = useState<boolean>(false)
   const [filterDate, setFilterDate] = useState<{ startDate: string; endDate: string } | null>(null);
   const [cardData, setCardData] = useState<CardData[]>([])
   const [chartData, setChartData] = useState<GraphData[]>([]);
 
+  const [topSelling, setTopSelling] = useState<TopSellingProduct[]>([])
 
-  const [isLoading, setIsLoading] = useState(false)
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
 
   useEffect(() => {
@@ -68,8 +86,6 @@ const page = () => {
     });
   }, []);
 
-
-  console.log(chartData, "chartData")
 
 
   const handleFilterChange = (option: { name: string; value: { startDate: Date; endDate: Date } }) => {
@@ -115,6 +131,58 @@ const page = () => {
 
 
 
+  // Top Products Calculator
+  type Product = {
+    _id: string;
+    title: string;
+    imageUrl: string;
+  };
+
+  type ProductSale = {
+    productId: string;
+    quantity: number;
+  };
+
+  type TopSellingProduct = {
+    _id: string;
+    title: string;
+   imageUrl: string;
+    totalSales: number;
+  };
+
+
+
+function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): TopSellingProduct[] {
+  const salesMap = new Map<string, TopSellingProduct>();
+
+  orders.forEach(order => {
+    order.products?.forEach(op => {
+      const product = allProducts.find(p => p.title === op.productTitle);
+      if (!product) return;
+
+      if (salesMap.has(product._id)) {
+        const existing = salesMap.get(product._id)!;
+        existing.totalSales += op.quantity;
+      } else {
+        salesMap.set(product._id, {
+          _id: product._id,
+          title: product.title,
+          imageUrl: product.imageUrl,
+          totalSales: op.quantity,
+        });
+      }
+    });
+  });
+
+  return Array.from(salesMap.values()).sort((a, b) => b.totalSales - a.totalSales);
+}
+
+
+
+
+  console.log(topSelling, "topSelling")
+
+
 
 
 
@@ -127,12 +195,23 @@ const page = () => {
         _id,
         total,
         _createdAt,
+         "products": products[]{_key, quantity},
         "customerId": customer->_id,
         "customerName": customer->firstName + " " + customer->lastName,
         "customerEmail": customer->email
       }`;
 
+
+      const productsQuery = `*[_type == "product"]{
+        _id,
+        title,
+        "imageUrl": image.asset->url
+      }`;
+
       const orders = await client.fetch(query)
+
+
+      const products = await client.fetch(productsQuery)
 
       // ======================  Graph Data ======================
 
@@ -160,6 +239,10 @@ const page = () => {
 
 
       setChartData(formattedChartData);
+
+      const topProducts = calculateTopSellingProducts(orders, products);
+
+      setTopSelling(topProducts)
 
 
       // 1. Total Orders
@@ -234,8 +317,6 @@ const page = () => {
   }, [filterDate])
 
 
-  console.log(cardData, "OrderData")
-
   // Handle logout
   const handleLogout = async () => {
     await fetch("/api/remove-user");
@@ -247,14 +328,14 @@ const page = () => {
   return (
     <div className='pt-24 max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8'>
 
-      <div className='flex justify-between items-center'>
+      <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center'>
 
         <div>
           <h1 className='font-bold text-2xl'>Welcome Back!</h1>
           <p className='text-sm font-normal text-gray-500'>Heres what happens with your store.</p>
         </div>
 
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between pt-4 sm:p-0 sm:items-center gap-4">
 
           {/* Filter Dropdown */}
           <div className="relative inline-block text-left">
@@ -310,9 +391,9 @@ const page = () => {
 
 
 
-      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 my-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 my-6'>
 
-        <div className='sm:col-span-2 lg:col-span-3'>
+        <div className='sm:col-span-2 lg:col-span-4'>
           <Graph data={chartData} />
         </div>
 
