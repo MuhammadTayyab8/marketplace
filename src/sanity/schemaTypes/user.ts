@@ -33,7 +33,7 @@
 //     ],
 
 //   }
-  
+
 
 
 // schemas/user.js
@@ -56,6 +56,19 @@ export default {
       name: 'name',
       title: 'Name',
       type: 'string',
+    },
+    {
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'User', value: 'user' },
+          { title: 'Admin', value: 'admin' },
+        ],
+        layout: 'radio' // optional: shows as radio buttons
+      },
+      initialValue: 'user'
     },
     {
       name: 'password',

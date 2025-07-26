@@ -59,7 +59,7 @@ const UserProfile = () => {
       const userId = await getUserId();
 
       if (!userId) {
-        router.push("/log-in");
+        router.push("/");
         return;
       }
 

@@ -113,7 +113,7 @@ export default function Navbar() {
 
           {/* Icons */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href='/sign-up'><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
+            <Link href='/profile'><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
             <Image src={search} alt='search-icon' onClick={() => setIsPanelOpen(true)} className="text-gray-800 hover:text-gray-600 cursor-pointer" />
             {/* <Link href='/wishlist'><Image src={heart} alt='heart-icon' className="text-gray-800 hover:text-gray-600 cursor-pointer" /></Link> */}
             {/* <Link href='/cart'><Image src={cart} alt='cart-icon' className="text-gray-800 hover:text-gray-600 cursor-pointer" /></Link> */}

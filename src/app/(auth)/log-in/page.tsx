@@ -52,6 +52,7 @@ const LoginForm = () => {
 
       // Redirect on successful login
       router.push('/');
+      // window.location.reload()
     } catch (error) {
       setError('An unexpected error occurred. Please try again later.');
     } finally {
