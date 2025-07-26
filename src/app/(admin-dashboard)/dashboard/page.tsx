@@ -13,6 +13,12 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { FiRepeat } from "react-icons/fi";
 import Cards from './Cards';
 import Graph from './Graph';
+import TopProducts from './TopProducts';
+import { TopSellingProduct } from '@/types/TopSellingProduct'
+import { RecentOrder } from '@/types/RecentOrders';
+import OrdersTable from './RecentOrders';
+import TopCustomers from './TopCustomer';
+import TopCustomersData from './TopCustomer';
 
 
 
@@ -43,18 +49,12 @@ interface Product {
 }
 
 interface Order {
+  customerName: string;
+  customerId: any;
   _id: string;
   products: Product[];
 }
 
-// Define the result type
-interface TopSellingProduct {
-  id: string;
-  name: string;
-  image: string;
-  sales: number;
-  price: number;
-}
 
 
 
@@ -71,6 +71,8 @@ const page = () => {
   const [chartData, setChartData] = useState<GraphData[]>([]);
 
   const [topSelling, setTopSelling] = useState<TopSellingProduct[]>([])
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
+  const [topCustomer, setTopCustomer] = useState<TopCustomer[]>([])
 
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -94,6 +96,7 @@ const page = () => {
       startDate: option.value.startDate.toISOString(),
       endDate: option.value.endDate.toISOString(),
     });
+    setShowModel(false)
   };
 
   const filterOptions = [
@@ -138,49 +141,65 @@ const page = () => {
     imageUrl: string;
   };
 
-  type ProductSale = {
-    productId: string;
-    quantity: number;
-  };
-
-  type TopSellingProduct = {
-    _id: string;
-    title: string;
-   imageUrl: string;
-    totalSales: number;
-  };
 
 
 
-function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): TopSellingProduct[] {
-  const salesMap = new Map<string, TopSellingProduct>();
+  function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): TopSellingProduct[] {
+    const salesMap = new Map<string, TopSellingProduct>();
 
-  orders.forEach(order => {
-    order.products?.forEach(op => {
-      const product = allProducts.find(p => p.title === op.productTitle);
-      if (!product) return;
+    orders.forEach(order => {
+      order.products?.forEach(op => {
+        const product = allProducts.find(p => p.title === op.productTitle);
+        if (!product) return;
 
-      if (salesMap.has(product._id)) {
-        const existing = salesMap.get(product._id)!;
-        existing.totalSales += op.quantity;
-      } else {
-        salesMap.set(product._id, {
-          _id: product._id,
-          title: product.title,
-          imageUrl: product.imageUrl,
-          totalSales: op.quantity,
-        });
-      }
+        if (salesMap.has(product._id)) {
+          const existing = salesMap.get(product._id)!;
+          existing.totalSales += op.quantity;
+        } else {
+          salesMap.set(product._id, {
+            id: product._id,
+            title: product.title,
+            imageUrl: product.imageUrl,
+            totalSales: op.quantity,
+          });
+        }
+      });
     });
+
+    return Array.from(salesMap.values()).sort((a, b) => b.totalSales - a.totalSales);
+  }
+
+
+
+
+const calculateTopCustomer = (orders: Order[]): TopCustomer[] => {
+  const customerOrderCount: Record<string, { name: string; count: number }> = {};
+
+  orders.forEach((order) => {
+    const id = order.customerId;
+    if (!id) return;
+
+    if (!customerOrderCount[id]) {
+      customerOrderCount[id] = {
+        name: order.customerName,
+        count: 1,
+      };
+    } else {
+      customerOrderCount[id].count += 1;
+    }
   });
 
-  return Array.from(salesMap.values()).sort((a, b) => b.totalSales - a.totalSales);
-}
+  // Sort descending
+  const sorted: TopCustomer[] = Object.entries(customerOrderCount)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([id, info]) => ({
+      customerId: id,
+      name: info.name,
+      orderCount: info.count,
+    }));
 
-
-
-
-  console.log(topSelling, "topSelling")
+  return sorted;
+};
 
 
 
@@ -195,7 +214,14 @@ function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): T
         _id,
         total,
         _createdAt,
-         "products": products[]{_key, quantity},
+        status,
+        "products": products[]{
+        _key,
+        productTitle,
+        quantity,
+        "imageUrl": product->image.asset->url,
+        "productId": product->_id
+      },
         "customerId": customer->_id,
         "customerName": customer->firstName + " " + customer->lastName,
         "customerEmail": customer->email
@@ -240,10 +266,19 @@ function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): T
 
       setChartData(formattedChartData);
 
+
+      // ================ Top Selling ===================
+
       const topProducts = calculateTopSellingProducts(orders, products);
 
       setTopSelling(topProducts)
 
+      // ================ Recent Orders ===================
+      setRecentOrders(orders)
+
+      // ================= Top Customer ==============
+      const topCustomerData = calculateTopCustomer(orders)
+      setTopCustomer(topCustomerData)
 
       // 1. Total Orders
       const totalsOrder = orders.length
@@ -391,17 +426,37 @@ function calculateTopSellingProducts(orders: Order[], allProducts: Product[]): T
 
 
 
-      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 my-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 my-11'>
 
         <div className='sm:col-span-2 lg:col-span-4'>
           <Graph data={chartData} />
         </div>
 
-        <div>
-          Hello World
+        <div className='sm:col-span-2'>
+          <TopProducts
+            topSelling={topSelling}
+          />
         </div>
 
       </div>
+
+
+
+
+
+      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 my-11'>
+
+        <div className='sm:col-span-2 lg:col-span-4'>
+          <OrdersTable orders={recentOrders} />
+        </div>
+
+        <div className='sm:col-span-2'>
+          <TopCustomersData topCustomer={topCustomer} />
+        </div>
+
+      </div>
+
+
 
 
     </div>

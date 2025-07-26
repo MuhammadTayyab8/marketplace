@@ -25,7 +25,7 @@ const Cards = ({ isLoading, cardData }: CardsProps) => {
           ))
         ) : (
           cardData.map((item, index) => (
-            <div key={index} className={`relative p-4 rounded-xl min-h-32 ${item.bgColor}`}>
+            <div key={index} className={`relative p-4 rounded-xl shadow min-h-32 ${item.bgColor}`}>
               <div
                 className={`absolute top-2 right-2 ${item.bgColor} ${item.textColor} rounded-full p-2 text-xl flex items-center justify-center`}
               >
