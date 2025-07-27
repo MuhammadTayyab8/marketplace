@@ -117,9 +117,14 @@ const CartPage = () => {
             <div className="w-full md:w-5/12 bg-[#F9F1E7] p-10 px-14 h-full">
               <h1 className="text-2xl font-bold text-black mb-6 text-center">Cart Totals</h1>
               <div className="space-y-4">
-                <div className="flex justify-between border-b border-black pb-3">
+                <div className="flex justify-between pb-3">
                   <p className="text-black font-normal">Subtotal</p>
-                  <p className="font-normal text-[#9F9F9F]">RS. {total}</p>
+                  <p className="font-normal text-gray-600">RS. {total}</p>
+                </div>
+
+                <div className="flex justify-between border-b border-black pb-3">
+                  <p className="text-black font-normal">Shipment Charges</p>
+                  <p className="font-normal text-gray-600">FREE</p>
                 </div>
 
                 <div className="flex justify-between">

@@ -7,6 +7,10 @@ export async function POST(request: NextRequest) {
   try {
     const { amount } = await request.json();
 
+    if (Number(amount) < 50) {
+      return NextResponse.json({ error: "Amount too low" }, { status: 400 });
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: "usd",

@@ -44,94 +44,36 @@ const page = () => {
 
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  console.log(total, "total")
-
 
 
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
-    fetch("/api/create-payment-intent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount: convertToSubcurrency(total) }),
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
+
+    if (!total || total <= 0 || total < 50) return;
+
+    if(clientSecret) return
+
+    const createPaymentIntent = async () => { 
+      const response = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount: convertToSubcurrency(total) }),
+      });
+
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
+    };
+
+    createPaymentIntent();
   }, [total]);
 
 
 
-  // Order creation function
-  const createOrderInSanity = async (orderData: { clientId?: string; firstName: any; lastName: any; email: any; phone: any; products: any; total: any; shippingAddress: any; paymentMethod: any; }) => {
-    try {
-      setIsSubmitting(true);
 
-      // Step 1: Check if the customer already exists by name and email
-      const existingCustomerQuery = `*[_type == "customer" && email == $email && firstName == $firstName && lastName == $lastName][0]`;
-      const existingCustomer = await client.fetch(existingCustomerQuery, {
-        email: orderData.email,
-        firstName: orderData.firstName,
-        lastName: orderData.lastName,
-      });
-
-      let customer;
-
-      // Step 2: If customer exists, use existing customer profile
-      if (existingCustomer) {
-        customer = existingCustomer;
-      } else {
-        // Step 3: If customer does not exist, create a new customer profile
-        customer = await client.create({
-          _type: 'customer',
-          firstName: orderData.firstName,
-          lastName: orderData.lastName,
-          email: orderData.email,
-          phone: orderData.phone,
-        });
-      }
-
-      // Step 4: Generate a unique client ID for the order
-      const clientId = uuidv4(); // Generate a unique client ID
-
-      // Step 5: Create the order
-      const order = await client.create({
-        _type: 'order',
-        clientId: clientId, // Use the dynamically generated clientId
-        customer: {
-          _type: 'reference',
-          _ref: customer._id, // Reference to the customer document
-        },
-        products: orderData.products.map((item: { _id: number; quantity: number; }) => ({
-          _key: uuidv4(),
-          product: {
-            _type: 'reference',
-            _ref: item._id, // this should be the actual Sanity product ID
-          },
-          quantity: item.quantity,
-        })),
-        total: orderData.total,
-        shippingAddress: orderData.shippingAddress,
-        paymentMethod: orderData.paymentMethod, // Add payment method
-      });
-
-
-
-      toast.success("Order Placed")
-
-      console.log('Order Created:', order);
-
-    } catch (err) {
-      console.error('Error creating order:', err);
-    } finally {
-      setIsSubmitting(false);
-
-    }
-  };
-
-
+  console.log(clientSecret, "clientSecret")
 
 
 
@@ -171,67 +113,7 @@ const page = () => {
 
 
   type FormDataKeys = keyof typeof formData;
-  // Handle place order
-  const handlePlaceOrderAndCustomer = async () => {
-    // Ensure all required fields are filled in
-    const requiredFields: FormDataKeys[] = [
-      'firstName',
-      'lastName',
-      'streetAddress',
-      'city',
-      'province',
-      'zipCode',
-      'phone',
-      'email',
-    ];
 
-    // Check if any required field is empty
-    const isFormValid = requiredFields.every((field) => formData[field] && formData[field].trim() !== '');
-    if (!isFormValid) {
-      toast.error('Please fill in all required fields.')
-      // alert('Please fill in all required fields.');
-      // Optional: You can show a message to the user here, like "All fields are required."
-      return;
-    }
-
-    // Ensure that items are available and not empty
-    if (items.length === 0) {
-      toast.error('No item Selected')
-      // alert('No items selected');
-      return;
-    }
-
-
-    const orderData = {
-      clientId: uuidv4(), // Dynamically generated unique client ID
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      products: items.map(item => ({
-        _id: item._id, // Sanity product ID for reference
-        quantity: item.quantity,
-      })),
-      total: items.reduce((acc, item) => acc + item.price * item.quantity, 0),
-      shippingAddress: {
-        streetAddress: formData.streetAddress,
-        city: formData.city,
-        province: formData.province,
-        zipCode: formData.zipCode,
-        phone: formData.phone,
-        email: formData.email,
-      },
-      paymentMethod: formData.paymentMethod, // Add payment method to orderData
-    };
-
-    try {
-      console.log(orderData, "ORDERDATA")
-      await createOrderInSanity(orderData); // Create the order if all validations pass
-      setIsModalOpen(true); // Open the modal after successful order creation
-    } catch (error) {
-      console.error('Error while creating the order:', error);
-    }
-  };
 
 
 
@@ -359,9 +241,9 @@ const page = () => {
 
       {/* checkout start  */}
 
-      <div className="mx-auto max-w-screen-2xl flex justify-between flex-wrap px-4 sm:px-12 md:px-20 py-8 space-x-8">
+      <div className="relative mx-auto max-w-screen-2xl flex justify-between flex-wrap px-4 sm:px-12 md:px-20 py-8 space-x-8">
         {/* Left Side - Billing Details */}
-        <div className="w-full md:w-[45%] space-y-6">
+        <div className="w-full md:w-[45%] space-y-6 sticky">
           <h1 className="text-2xl font-semibold text-gray-800 mb-6">Billing Details</h1>
 
           {/* First Name and Last Name */}
@@ -522,6 +404,12 @@ const page = () => {
               <p className="text-sm text-gray-600">Subtotal</p>
               <p className="font-semibold text-gray-700">Rs. {total}</p>
             </div>
+
+            <div className="flex justify-between">
+              <p className="text-sm text-gray-600">Shipment</p>
+              <p className="font-semibold text-gray-700">FREE</p>
+            </div>
+
             <div className="flex justify-between py-2 border-b">
               <p className="text-xl text-gray-600 font-bold">Total</p>
               <p className="font-bold text-[#B88E2F] text-xl">Rs. {total}</p>
@@ -566,7 +454,7 @@ const page = () => {
                 appearance: { theme: "stripe" },
               }}
             >
-              <CheckoutPage amount={total} isFilled={isFormValid} formData={formData} paymentMethod={paymentMethod} />
+              <CheckoutPage setClientSecret={setClientSecret} amount={total} isFilled={isFormValid} formData={formData} paymentMethod={paymentMethod} />
             </Elements>
           )}
 

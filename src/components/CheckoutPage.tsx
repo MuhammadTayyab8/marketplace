@@ -20,6 +20,7 @@ const CheckoutPage = ({
   isFilled,
   formData,
   paymentMethod,
+  setClientSecret
 }: {
   amount: number;
   formData: {
@@ -32,6 +33,7 @@ const CheckoutPage = ({
   }
   isFilled: boolean;
   paymentMethod: string;
+  setClientSecret: React.Dispatch<React.SetStateAction<string>>;
 }) => {
 
 
@@ -45,6 +47,7 @@ const CheckoutPage = ({
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const { state: { items }, dispatch } = useCart();
 
 
 
@@ -53,35 +56,43 @@ const CheckoutPage = ({
 
 
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  setLoading(true);
 
-    if (!stripe || !elements) {
-      return;
-    }
+  if (!stripe || !elements) return;
 
-
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      setErrorMessage(submitError.message);
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?amount=${amount}`,
-      },
-    });
-
-    if (error) {
-      setErrorMessage(error.message);
-    }
-
+  const { error: submitError } = await elements.submit();
+  if (submitError) {
+    setErrorMessage(submitError.message);
     setLoading(false);
-  };
+    return;
+  }
+
+  const { error, paymentIntent } = await stripe.confirmPayment({
+    elements,
+    confirmParams: {
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?amount=${amount}`,
+    },
+    redirect: "if_required",
+  });
+
+  if (error) {
+    setErrorMessage(error.message);
+    setLoading(false);
+    return;
+  }
+
+  if (paymentIntent?.status === "succeeded") {
+    await handlePlaceOrderToSanity();
+    setClientSecret("");
+    window.location.href = `/success?amount=${amount}`;
+  }
+
+  setLoading(false);
+};
+
+
 
 
   if (!stripe || !elements) {
@@ -121,7 +132,8 @@ const CheckoutPage = ({
 
   const handlePlaceOrderToSanity = async () => {
     if (!isFilled) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields")
+      // alert("Please fill all fields");
       console.log('form not fill')
       return;
 
@@ -141,8 +153,6 @@ const CheckoutPage = ({
         return;
       }
 
-
-      const { state: { items }, dispatch } = useCart();
 
       console.log("Before sending order to Sanity");
       // Create the order object
@@ -204,7 +214,7 @@ const CheckoutPage = ({
         <button
           disabled={!stripe || loading}
           type="submit"
-          className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse" onClick={handlePlaceOrderToSanity}
+          className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse"
         >
           {!loading ? `Pay $${amount}` : "Processing..."}
         </button>

@@ -25,22 +25,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // if (protectedAdminPaths.some(path => pathname.startsWith(path))) {
-  //   if (!token) {
-  //     return NextResponse.redirect(new URL("/log-in", request.url));
-  //   }
+  if (protectedAdminPaths.some(path => pathname.startsWith(path))) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/log-in", request.url));
+    }
 
-  //   try {
-  //     const decoded: any = await verifyJWT(token, process.env.JWT_SECRET!);
+    try {
+      const decoded: any = await verifyJWT(token, process.env.JWT_SECRET!);
 
-  //     if (decoded.role !== "admin") {
-  //       return NextResponse.redirect(new URL("/", request.url));
-  //     }
-  //   } catch (err) {
-  //     console.log("JWT error:", err);
-  //     return NextResponse.redirect(new URL("/log-in", request.url));
-  //   }
-  // }
+      if (decoded.role !== "admin") {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    } catch (err) {
+      console.log("JWT error:", err);
+      return NextResponse.redirect(new URL("/log-in", request.url));
+    }
+  }
 
   return NextResponse.next();
 }
