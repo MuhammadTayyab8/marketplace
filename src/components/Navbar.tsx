@@ -11,6 +11,7 @@ import { useCart } from '@/components/CartContext'; // Import the useCart hook
 import { useWishlist } from './WishlistContext';
 import { client } from '@/sanity/lib/client';
 import { IoSearchSharp } from "react-icons/io5";
+import { useRouter } from 'next/navigation';
 
 
 
@@ -27,11 +28,48 @@ export default function Navbar() {
     discountPercentage: number;
     netTotal: number;
   }
+
+  const router = useRouter();
+
+
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [link, setLink] = useState<string>('')
+
+  useEffect(() => {
+
+
+    const fetchUserData = async () => {
+      try {
+
+        const res = await fetch("/api/get-user");
+        const data = await res.json();
+        const role = data?.role;
+
+        if (!role) {
+          router.push("/");
+          return;
+        }
+
+        if(role.toLowerCase() == "admin"){
+          setLink('/dashboard')
+        } else {
+          setLink('/profile')
+        }
+
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUserData();
+  }, []);
 
 
   const { state } = useCart(); // Get the cart state from context
@@ -113,7 +151,7 @@ export default function Navbar() {
 
           {/* Icons */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href='/profile'><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
+            <Link href={link}><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
             <Image src={search} alt='search-icon' onClick={() => setIsPanelOpen(true)} className="text-gray-800 hover:text-gray-600 cursor-pointer" />
             {/* <Link href='/wishlist'><Image src={heart} alt='heart-icon' className="text-gray-800 hover:text-gray-600 cursor-pointer" /></Link> */}
             {/* <Link href='/cart'><Image src={cart} alt='cart-icon' className="text-gray-800 hover:text-gray-600 cursor-pointer" /></Link> */}

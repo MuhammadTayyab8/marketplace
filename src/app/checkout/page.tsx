@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'; // Import uuid package
 import Image from 'next/image'
 import heroIcon from '../../../public/icon-hero.png'
@@ -13,6 +13,7 @@ import { client } from '@/sanity/lib/client'
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutPage from "@/components/CheckoutPage";
+import toast from 'react-hot-toast';
 
 
 
@@ -21,13 +22,21 @@ const page = () => {
 
   const { state: { items }, dispatch } = useCart();
 
-  console.log(items)
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handlePlaceOrder = () => {
-    setIsModalOpen(true);
-  };
+    const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    streetAddress: '',
+    city: '',
+    province: '',
+    zipCode: '',
+    phone: '',
+    email: '',
+    paymentMethod: 'cod', // Default value, could be bankTransfer or cod
+  });
+
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -38,13 +47,23 @@ const page = () => {
 
 
 
+  const [clientSecret, setClientSecret] = useState("");
 
+  useEffect(() => {
+    fetch("/api/create-payment-intent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount: convertToSubcurrency(total) }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret));
+  }, [total]);
 
 
 
   // Order creation function
-
-
   const createOrderInSanity = async (orderData: { clientId?: string; firstName: any; lastName: any; email: any; phone: any; products: any; total: any; shippingAddress: any; paymentMethod: any; }) => {
     try {
       // Step 1: Check if the customer already exists by name and email
@@ -103,17 +122,7 @@ const page = () => {
 
 
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    streetAddress: '',
-    city: '',
-    province: '',
-    zipCode: '',
-    phone: '',
-    email: '',
-    paymentMethod: 'cod', // Default value, could be bankTransfer or cod
-  });
+
 
 
   const requiredFields: FormDataKeys[] = [
@@ -137,14 +146,6 @@ const page = () => {
 
 
 
-  // Capture payment method change
-  const handlePaymentMethodChange = (e: { target: { value: any } }) => {
-    setFormData((prev) => ({
-      ...prev,
-      paymentMethod: e.target.value,
-    }));
-  };
-
   // Handle form input change
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -154,8 +155,8 @@ const page = () => {
     }));
   };
 
-  console.log(items)
 
+  
   type FormDataKeys = keyof typeof formData;
   // Handle place order
   const handlePlaceOrderAndCustomer = async () => {
@@ -174,14 +175,16 @@ const page = () => {
     // Check if any required field is empty
     const isFormValid = requiredFields.every((field) => formData[field] && formData[field].trim() !== '');
     if (!isFormValid) {
-      alert('Please fill in all required fields.');
+      toast.error('Please fill in all required fields.')
+      // alert('Please fill in all required fields.');
       // Optional: You can show a message to the user here, like "All fields are required."
       return;
     }
 
     // Ensure that items are available and not empty
     if (items.length === 0) {
-      alert('No items selected');
+      toast.error('No item Selected')
+      // alert('No items selected');
       return;
     }
 
@@ -223,7 +226,6 @@ const page = () => {
 
 
   const [paymentMethod, setPaymentMethod] = useState("bankTransfer");
-  console.log(paymentMethod)
 
   function convertToSubcurrency(totalAmount: number, factor = 100) {
     return Math.round(totalAmount * factor);
@@ -233,11 +235,6 @@ const page = () => {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
   }
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-
-
-
-
-
 
 
 
@@ -257,8 +254,8 @@ const page = () => {
 
   const handlePlaceOrderToSanity = async () => {
     if (!isFormValid) {
-      alert("Please fill all fields");
-      console.log('form not fill')
+      toast.error("Please fill all fields")
+      // alert("Please fill all fields");
       return;
 
     }
@@ -271,7 +268,7 @@ const page = () => {
       const userId = await getUserId();
 
       if (!userId) {
-        alert("User not logged in");
+        toast.error("User not found.")
         console.log('user not found')
         return;
       }
@@ -311,7 +308,8 @@ const page = () => {
       setIsModalOpen(true); // Show success modal
     } catch (err) {
       console.error("Sanity error:", err);
-      alert("Sanity API error: ");
+      toast.error(`Sanity Error: ${err}`)
+      // alert("Sanity API error: ");
       console.log(err)
     } finally {
       setIsSubmitting(false);
@@ -547,8 +545,13 @@ const page = () => {
 
 
           {/* Show Stripe Payment Element Only for Bank Transfer */}
-          {paymentMethod === "bankTransfer" && (
-            <Elements stripe={stripePromise} options={{ mode: "payment", amount: convertToSubcurrency(total), currency: "usd" }}>
+          {paymentMethod === "bankTransfer" && clientSecret && (
+            <Elements stripe={stripePromise}
+              options={{
+                clientSecret,
+                appearance: { theme: "stripe" },
+              }}
+            >
               <CheckoutPage amount={total} isFilled={isFormValid} formData={formData} paymentMethod={paymentMethod} />
             </Elements>
           )}
@@ -556,7 +559,7 @@ const page = () => {
           {/* Place Order Button */}
           {paymentMethod === 'cod' && (
             <div className="mt-6">
-              <button className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse" onClick={handlePlaceOrderToSanity} disabled={isSubmitting}>
+              <button className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse" onClick={handlePlaceOrderAndCustomer} disabled={isSubmitting}>
                 {isSubmitting ? "Placing Order..." : "Place Order"}
               </button>
             </div>

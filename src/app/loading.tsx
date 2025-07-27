@@ -2,7 +2,8 @@
 'use client';
 
 import Image from 'next/image';
-import logo from '../../public/logo.png'; // Path to your logo image
+import logo from '../../public/logo.png';
+
 
 export default function Loading() {
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 
 // Define Types
@@ -34,7 +35,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       const existingProduct = state.items.find((item) => item._id === action.payload._id);
     
       if (existingProduct) {
-        alert('Item Already In Cart');
+        toast.error("Item already in cart.")
         return {
           ...state,
           items: state.items.map((item) =>
@@ -44,7 +45,8 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           ),
         };
       } else {
-        alert('Item Added to Cart');
+        toast.success("Item added to cart.")
+        // alert('Item Added to Cart');
         return {
           ...state,
           items: [...state.items, { ...action.payload, quantity: 1 }],

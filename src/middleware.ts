@@ -11,10 +11,6 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value || null;
   const pathname = request.nextUrl.pathname;
 
-  console.log("Token:", token);
-  console.log("JWT_SECRET:", process.env.JWT_SECRET);
-  console.log("Pathname:", pathname);
-
   const protectedAdminPaths = ["/dashboard"];
 
   if (!token && pathname === "/checkout") {
@@ -36,7 +32,6 @@ export async function middleware(request: NextRequest) {
 
     try {
       const decoded: any = await verifyJWT(token, process.env.JWT_SECRET!);
-      console.log("Decoded Role:", decoded.role);
 
       if (decoded.role !== "admin") {
         return NextResponse.redirect(new URL("/", request.url));

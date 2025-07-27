@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 // Define Product Interface
 export interface Product {
@@ -39,16 +40,19 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   const addToWishlist = (product: Product) => {
     if (wishlist.some((item) => item._id === product._id)) {
-      alert(`Item is already in the wishlist`);
+      toast.error("Item is already in the wishlist")
+      // alert(`Item is already in the wishlist`);
     } else {
       setWishlist((prev) => [...prev, product]);
-      alert(`Item added to wishlist`);
+      toast.success("Item added to wishlist")
+      // alert(`Item added to wishlist`);
     }
   };
 
   const removeFromWishlist = (id: string) => {
     setWishlist((prev) => prev.filter((item) => item._id !== id));
-    alert(`Item Remove From wishlist`)
+    toast.success("Item remove from wishlist")
+    // alert(`Item Remove From wishlist`)
   };
 
   return (
