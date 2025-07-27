@@ -38,7 +38,7 @@ export default function Navbar() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [link, setLink] = useState<string>('')
+  const [link, setLink] = useState<string>('/log-in')
 
   useEffect(() => {
 

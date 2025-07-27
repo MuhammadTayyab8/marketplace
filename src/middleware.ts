@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   if (protectedAdminPaths.some(path => pathname.startsWith(path))) {
     if (!token) {
-      return NextResponse.redirect(new URL("/log-in", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     try {

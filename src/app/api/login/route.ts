@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/sanity/lib/client";
 import { cookies } from "next/headers";
-import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 // Login API Route
 export async function POST(req: Request) {
@@ -50,19 +49,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
+    console.error("Login API error:", error);  // Add this
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

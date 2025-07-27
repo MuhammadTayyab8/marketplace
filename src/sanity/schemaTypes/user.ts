@@ -1,43 +1,6 @@
-// // schemas/user.js
-// export default {
-//     name: 'user',
-//     title: 'User',
-//     type: 'document',
-//     fields: [
-//       {
-//         name: 'email',
-//         title: 'Email',
-//         type: 'string',
-//       },
-//       {
-//         name: 'username',
-//         title: 'username',
-//         type: 'string',
-//       },
-//       {
-//         name: 'name',
-//         title: 'Name',
-//         type: 'string',
-//       },
-//       {
-//         name: 'password',
-//         title: 'Password',
-//         type: 'string',
-//       },
-//       {
-//         name: 'orders',
-//         title: 'Orders',
-//         type: 'array',
-//         of: [{ type: 'reference', to: [{ type: 'order' }] }],
-//       },
-//     ],
-
-//   }
-
-
 
 // schemas/user.js
-export default {
+const userSchema = {
   name: 'user',
   title: 'User',
   type: 'document',
@@ -106,3 +69,7 @@ export default {
     },
   ],
 };
+
+
+
+export default userSchema;
