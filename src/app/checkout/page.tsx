@@ -25,7 +25,7 @@ const page = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     streetAddress: '',
@@ -44,6 +44,7 @@ const page = () => {
 
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  console.log(total, "total")
 
 
 
@@ -66,6 +67,8 @@ const page = () => {
   // Order creation function
   const createOrderInSanity = async (orderData: { clientId?: string; firstName: any; lastName: any; email: any; phone: any; products: any; total: any; shippingAddress: any; paymentMethod: any; }) => {
     try {
+      setIsSubmitting(true);
+
       // Step 1: Check if the customer already exists by name and email
       const existingCustomerQuery = `*[_type == "customer" && email == $email && firstName == $firstName && lastName == $lastName][0]`;
       const existingCustomer = await client.fetch(existingCustomerQuery, {
@@ -101,10 +104,12 @@ const page = () => {
           _type: 'reference',
           _ref: customer._id, // Reference to the customer document
         },
-        products: orderData.products.map((item: { productTitle: any; price: any; quantity: any; }) => ({
-          _key: uuidv4(), // Generate a unique key for each product
-          productTitle: item.productTitle,
-          price: item.price,
+        products: orderData.products.map((item: { _id: number; quantity: number; }) => ({
+          _key: uuidv4(),
+          product: {
+            _type: 'reference',
+            _ref: item._id, // this should be the actual Sanity product ID
+          },
           quantity: item.quantity,
         })),
         total: orderData.total,
@@ -112,9 +117,17 @@ const page = () => {
         paymentMethod: orderData.paymentMethod, // Add payment method
       });
 
+
+
+      toast.success("Order Placed")
+
       console.log('Order Created:', order);
+
     } catch (err) {
       console.error('Error creating order:', err);
+    } finally {
+      setIsSubmitting(false);
+
     }
   };
 
@@ -156,7 +169,7 @@ const page = () => {
   };
 
 
-  
+
   type FormDataKeys = keyof typeof formData;
   // Handle place order
   const handlePlaceOrderAndCustomer = async () => {
@@ -196,8 +209,7 @@ const page = () => {
       email: formData.email,
       phone: formData.phone,
       products: items.map(item => ({
-        productTitle: item.title,
-        price: item.price,
+        _id: item._id, // Sanity product ID for reference
         quantity: item.quantity,
       })),
       total: items.reduce((acc, item) => acc + item.price * item.quantity, 0),
@@ -213,6 +225,7 @@ const page = () => {
     };
 
     try {
+      console.log(orderData, "ORDERDATA")
       await createOrderInSanity(orderData); // Create the order if all validations pass
       setIsModalOpen(true); // Open the modal after successful order creation
     } catch (error) {
@@ -289,12 +302,13 @@ const page = () => {
           price: item.price,
           quantity: item.quantity,
         })),
-        fullName: formData.firstName + " " + formData.lastName,
+        customerName: formData.firstName + " " + formData.lastName,
         city: formData.city,
         address: formData.streetAddress,
         phone: formData.phone,
-        email: formData.email,
-        totalAmount: total,
+        customerId: userId,
+        customerEmail: formData.email,
+        total: total,
         paymentMode: paymentMethod,
         status: "pending",
         createdAt: new Date().toISOString(),
@@ -559,7 +573,7 @@ const page = () => {
           {/* Place Order Button */}
           {paymentMethod === 'cod' && (
             <div className="mt-6">
-              <button className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse" onClick={handlePlaceOrderAndCustomer} disabled={isSubmitting}>
+              <button className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse" onClick={handlePlaceOrderToSanity} disabled={isSubmitting}>
                 {isSubmitting ? "Placing Order..." : "Place Order"}
               </button>
             </div>

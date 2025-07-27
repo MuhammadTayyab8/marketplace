@@ -222,9 +222,9 @@ const calculateTopCustomer = (orders: Order[]): TopCustomer[] => {
         "imageUrl": product->image.asset->url,
         "productId": product->_id
       },
-        "customerId": customer->_id,
-        "customerName": customer->firstName + " " + customer->lastName,
-        "customerEmail": customer->email
+        "customerId": user->_id,
+        "customerName": user->name,
+        "customerEmail": user->email
       }`;
 
 
@@ -280,15 +280,19 @@ const calculateTopCustomer = (orders: Order[]): TopCustomer[] => {
       const topCustomerData = calculateTopCustomer(orders)
       setTopCustomer(topCustomerData)
 
+
+      // ====================== Cards ======================
       // 1. Total Orders
       const totalsOrder = orders.length
+
+      console.log(orders, "orders")
 
       // 2. Total Sales
       const totalSales = orders.reduce((acc: number, order: { total: number; }) => acc + order.total, 0)
 
       // 3. Unique Customers (this month)
-      const uniqueCustomerIds = [new Set(orders.map((order: { customerId: number; }) => order.customerId))];
-      const totalCustomersThisMonth = uniqueCustomerIds.length;
+      const uniqueCustomerIds = new Set(orders.map((order: { customerId: string; }) => order.customerId));
+      const totalCustomersThisMonth = uniqueCustomerIds.size;
 
       // 4. Repeat Customers % (placed more than 1 order this month)
       const customerOrderCounts: Record<string, number> = {};

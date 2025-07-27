@@ -51,14 +51,16 @@ export default function Navbar() {
         const role = data?.role;
 
         if (!role) {
-          router.push("/");
+          router.push("/log-in");
           return;
         }
 
         if(role.toLowerCase() == "admin"){
           setLink('/dashboard')
-        } else {
+        } else if (role.toLowerCase() == "user") {
           setLink('/profile')
+        } else {
+          setLink('/log-in')
         }
 
       } catch (err) {
