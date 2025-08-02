@@ -16,27 +16,35 @@ type CardsProps = {
 const Cards = ({ isLoading, cardData }: CardsProps) => {
   return (
     <div>
-      <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 my-6 overflow-x-auto sm:overflow-x-visible px-2 hide-scrollbar">
-        {isLoading ? (
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={index}>
-              <div className="relative p-4 shadow-sm border border-gray-100 rounded-xl min-h-32 bg-gray-300 animate-pulse" />
-            </div>
-          ))
-        ) : (
-          cardData.map((item, index) => (
-            <div key={index} className={`relative p-4 rounded-xl shadow min-h-32 ${item.bgColor}`}>
+      <div className="my-6">
+        {/* Horizontal scroll on mobile */}
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-x-visible px-2 hide-scrollbar">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, index) => (
               <div
-                className={`absolute top-2 right-2 ${item.bgColor} ${item.textColor} rounded-full p-2 text-xl flex items-center justify-center`}
+                key={index}
+                className="w-[250px] flex-shrink-0 sm:w-auto"
               >
-                {item.icon}
+                <div className="relative p-4 shadow-sm border border-gray-100 rounded-xl min-h-32 bg-gray-300 animate-pulse" />
               </div>
-              <div className="text-md text-gray-600">{item.name}</div>
-              <div className="text-xl font-semibold text-black">{item.value}</div>
-            </div>
-          ))
-        )}
+            ))
+            : cardData.map((item, index) => (
+              <div
+                key={index}
+                className={`w-[250px] flex-shrink-0 sm:w-auto relative p-4 rounded-xl shadow min-h-32 ${item.bgColor}`}
+              >
+                <div
+                  className={`absolute top-2 right-2 ${item.bgColor} ${item.textColor} rounded-full p-2 text-xl flex items-center justify-center`}
+                >
+                  {item.icon}
+                </div>
+                <div className="text-md text-gray-600">{item.name}</div>
+                <div className="text-xl font-semibold text-black">{item.value}</div>
+              </div>
+            ))}
+        </div>
       </div>
+
     </div>
   );
 };
