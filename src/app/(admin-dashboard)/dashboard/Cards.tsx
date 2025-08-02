@@ -16,7 +16,7 @@ type CardsProps = {
 const Cards = ({ isLoading, cardData }: CardsProps) => {
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-6">
+      <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 my-6 overflow-x-auto sm:overflow-x-visible px-2 hide-scrollbar">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, index) => (
             <div key={index}>

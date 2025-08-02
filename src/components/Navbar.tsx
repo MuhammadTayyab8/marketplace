@@ -51,7 +51,7 @@ export default function Navbar() {
         const role = data?.role;
 
         if (!role) {
-          router.push("/log-in");
+          router.push("/");
           return;
         }
 
@@ -218,7 +218,7 @@ export default function Navbar() {
             </Link>
 
             <div className="flex gap-6 pt-8 pb-8" onClick={() => setIsMenuOpen(false)}>
-              <Link href='/sign-up'><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
+              <Link href={link}><Image src={user} alt='user-icon' className="text-gray-800 hover:text-gray-600 w- cursor-pointer" /></Link>
               <Image src={search} alt='search-icon' onClick={() => setIsPanelOpen(true)} className="text-gray-800 hover:text-gray-600 cursor-pointer" />
               <button className="text-gray-600 hover:text-gray-900 text-2xl relative">
                 <Link href="/wishlist">

@@ -360,6 +360,7 @@ const calculateTopCustomer = (orders: Order[]): TopCustomer[] => {
   const handleLogout = async () => {
     await fetch("/api/remove-user");
     router.push("/log-in");
+    window.location.reload();
   };
 
 
